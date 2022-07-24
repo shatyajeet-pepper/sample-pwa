@@ -15,6 +15,23 @@ function App() {
       console.log('SW Url:', swUrl)
       console.log('registering new service worker')
       navigator.serviceWorker.register(window.location.protocol + '//' + window.location.host + '/service-worker.js')
+        .then(registration => {
+          registration.onupdatefound = () => {
+            const installingWorker = registration.installing;
+            if (installingWorker === null) {
+              return
+            }
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  console.log('New update found')
+                } else {
+                  console.log('No new update')
+                }
+              }
+            }
+          }
+        })
     }
   }
 
