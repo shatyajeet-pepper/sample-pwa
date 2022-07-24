@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  useEffect(() => {
+    document.addEventListener('visibilitychange', checkVisibility)
+
+    return () => document.removeEventListener('visibilitychange', checkVisibility)
+  }, [])
+
+  function checkVisibility() {
+    if (document.visibilityState === 'visible' && process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register(window.location.host + '/service-worker.js')
+    }
+  }
+
   return (
     <div className="App">
       <header className="App-header">
