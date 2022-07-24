@@ -11,6 +11,9 @@ function App() {
 
   function checkVisibility() {
     if (document.visibilityState === 'visible' && process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+      const swUrl = window.location.protocol + '//' + window.location.host + '/service-worker.js'
+      console.log('SW Url:', swUrl)
+      console.log('registering new service worker')
       navigator.serviceWorker.register(window.location.protocol + '//' + window.location.host + '/service-worker.js')
     }
   }
