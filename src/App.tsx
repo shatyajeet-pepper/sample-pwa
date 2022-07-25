@@ -1,46 +1,50 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  const [newUpdateFound, setNewUpdateFound] = useState(false)
   useEffect(() => {
     document.addEventListener('visibilitychange', checkVisibility)
+    navigator.serviceWorker.getRegistration()
+      .then(registration => {
+        registration?.addEventListener('updatefound', handleNewUpdateAvailable)
+      })
 
     return () => document.removeEventListener('visibilitychange', checkVisibility)
   }, [])
 
   function checkVisibility() {
     if (document.visibilityState === 'visible' && process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-      const swUrl = window.location.protocol + '//' + window.location.host + '/service-worker.js'
-      console.log('SW Url:', swUrl)
-      console.log('registering new service worker')
-      navigator.serviceWorker.register(window.location.protocol + '//' + window.location.host + '/service-worker.js')
+      navigator.serviceWorker.getRegistration()
         .then(registration => {
-          registration.onupdatefound = () => {
-            const installingWorker = registration.installing;
-            if (installingWorker === null) {
-              return
-            }
-            installingWorker.onstatechange = () => {
-              if (installingWorker.state === 'installed') {
-                if (navigator.serviceWorker.controller) {
-                  console.log('New update found')
-                } else {
-                  console.log('No new update')
-                }
-              }
-            }
-          }
+          registration?.update()
         })
     }
+  }
+
+  function handleNewUpdateAvailable() {
+    setNewUpdateFound(true)
+  }
+
+  function handleUpdateClick() {
+    navigator.serviceWorker.getRegistration()
+      .then(reg => {
+        reg?.waiting?.postMessage({ type: 'SKIP_WAITING' })
+        window.location.reload()
+      })
   }
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        {newUpdateFound && <div>
+          <div>New Update Found!</div>
+          <button onClick={handleUpdateClick}>Update</button>
+        </div>}
         <p>
-          Edit <code>src/App.tsx again and again</code> and save to reload.
+          Edit <code>src n with sw with skip waiting and reload</code> and save to reload.
         </p>
         <a
           className="App-link"

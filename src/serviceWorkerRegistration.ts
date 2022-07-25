@@ -61,11 +61,6 @@ function registerValidSW(swUrl: string, config?: Config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
-      const options = {
-        userVisibleOnly: true,
-        applicationServerKey: 'BCd8Nck58P3Tn13ASwexT6aU3j4vPCvOaUX8vHj3H0jPQ7prgyqSYgp9GzD0ARkKrqW1AavJhjawla4GtF2n-Lo'
-      }
-      registration.pushManager.subscribe(options).then(console.log)
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
